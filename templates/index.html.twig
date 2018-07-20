@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% import "macro.html.twig" as macro %}
+
+{% block content %}
+    {{ macro.greeting('Xray!') }}
+
+    More content...
+
+    {{ include('inc.html.twig') }}
+{% endblock %}
+
