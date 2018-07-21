@@ -48,7 +48,7 @@ var js = (function() {
                     el = el.nextSibling;
                 }
 
-                var bbox = {top: 999999, left: 999999, right: 0, bottom: 0}, i, c;
+                var bbox = {top: Number.MAX_SAFE_INTEGER, left: Number.MAX_SAFE_INTEGER, right: 0, bottom: 0}, i, c;
                 for (i = 0, c = stack.length; i < c; ++i) {
                     var target = stack[i], rect;
                     if (target.nodeType === 3) {
