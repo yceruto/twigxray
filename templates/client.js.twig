@@ -35,13 +35,13 @@ var js = (function() {
                 { acceptNode: function () { return NodeFilter.FILTER_ACCEPT; } }
             );
             while (nodeIterator.nextNode()) {
-                var comment = nodeIterator.referenceNode, match = comment.data.match(/^XRAY START (.+)$/);
+                var comment = nodeIterator.referenceNode, match = comment.data.match(/^TWIG-START: (.+)$/);
                 if (!match) {
                     continue;
                 }
 
                 var parts = match[1].split(' '), el = comment.nextSibling, stack = [];
-                while (!(!el || (el.nodeType === 8 && el.data === ('XRAY END ' + parts[0] + ' ' + parts[1])))) {
+                while (!(!el || (el.nodeType === 8 && el.data === ('TWIG-END: ' + parts[0] + ' ' + parts[1])))) {
                     if (el.nodeType === 3 || (el.nodeType === 1 && el.tagName !== 'SCRIPT')) {
                         stack.push(el);
                     }
@@ -69,7 +69,7 @@ var js = (function() {
                 }
 
                 var visual = document.createElement('DIV');
-                addClass(visual, 'xray');
+                addClass(visual, '__twig-debug');
                 visual.setAttribute('title', parts.join(' '));
                 visual.style.top = parseInt(bbox.top) + 'px';
                 visual.style.left = parseInt(bbox.left) + 'px';
