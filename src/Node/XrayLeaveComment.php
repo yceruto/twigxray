@@ -18,7 +18,7 @@ class XrayLeaveComment extends Node implements \Twig_NodeOutputInterface
     {
         $compiler
             ->write('echo ')
-            ->string(sprintf("<!-- XRAY END %s %s -->\n", $this->getAttribute('type'), $this->getAttribute('hash')))
+            ->string(sprintf("<!--XRAY END %s %s-->\n", $this->getAttribute('type'), $this->getAttribute('hash')))
             ->raw(";\n")
         ;
     }

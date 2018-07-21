@@ -19,7 +19,7 @@ class XrayEnterComment extends Node implements \Twig_NodeOutputInterface
         $compiler
             ->addDebugInfo($this)
             ->write('echo ')
-            ->string(sprintf("<!-- XRAY START %s %s %s line:%d -->\n", $this->getAttribute('type'), rtrim($this->getAttribute('hash').' '.$this->getAttribute('name')), $this->getAttribute('template'), $this->lineno))
+            ->string(sprintf("<!--XRAY START %s %s %s line:%d-->\n", $this->getAttribute('type'), rtrim($this->getAttribute('hash').' '.$this->getAttribute('name')), $this->getAttribute('template'), $this->lineno))
             ->raw(";\n")
         ;
     }

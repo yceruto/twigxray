@@ -38,9 +38,30 @@ js.addEventListener(document.body, 'mouseover', function (e) {
         { acceptNode: function (node) { return NodeFilter.FILTER_ACCEPT; } }
     );
     while (nodeIterator.nextNode()) {
-        var comment = nodeIterator.referenceNode.data.match(/^\s*XRAY START (.+)$/);
-        if (comment) {
-            console.log(comment[1].split(' '));
+        var comment = nodeIterator.referenceNode, match = comment.data.match(/^XRAY START (.+)$/);
+        if (!match) {
+            continue;
         }
+        var parts = match[1].split(' '), el = comment.nextSibling, stack = [];
+        while (!(!el || (el.nodeType === 8 && el.data === ('XRAY END ' + parts[0] + ' ' + parts[1])))) {
+            if (el.nodeType === 3 || (el.nodeType === 1 && el.tagName !== 'SCRIPT')) {
+                stack.push(el);
+            }
+            el = el.nextSibling;
+        }
+        var bbox = {top: 0, left: 0, width: 0, height: 0}, i, c;
+        for (i = 0, c = stack.length; i < c; ++i) {
+            var target = stack[i], rect;
+            if (target.nodeType === 3) {
+                target = document.createRange();
+                target.selectNodeContents(stack[i]);
+            }
+            rect = target.getBoundingClientRect();
+            bbox.top = Math.max(bbox.top, rect.top);
+            bbox.left = Math.max(bbox.left, rect.left);
+            bbox.width = Math.max(bbox.width, rect.width);
+            bbox.height = Math.max(bbox.height, rect.height);
+        }
+        console.log(bbox);
     }
 });
