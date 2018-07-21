@@ -1,0 +1,46 @@
+var js = (function() {
+    "use strict";
+
+    if ('classList' in document.documentElement) {
+        var hasClass = function (el, cssClass) { return el.classList.contains(cssClass); };
+        var removeClass = function(el, cssClass) { el.classList.remove(cssClass); };
+        var addClass = function(el, cssClass) { el.classList.add(cssClass); };
+        var toggleClass = function(el, cssClass) { el.classList.toggle(cssClass); };
+    } else {
+        var hasClass = function (el, cssClass) { return el.className.match(new RegExp('\\b' + cssClass + '\\b')); };
+        var removeClass = function(el, cssClass) { el.className = el.className.replace(new RegExp('\\b' + cssClass + '\\b'), ' '); };
+        var addClass = function(el, cssClass) { if (!hasClass(el, cssClass)) { el.className += " " + cssClass; } };
+        var toggleClass = function(el, cssClass) { hasClass(el, cssClass) ? removeClass(el, cssClass) : addClass(el, cssClass); };
+    }
+
+    var addEventListener;
+
+    var el = document.createElement('div');
+    if (!('addEventListener' in el)) {
+        addEventListener = function (element, eventName, callback) {
+            element.attachEvent('on' + eventName, callback);
+        };
+    } else {
+        addEventListener = function (element, eventName, callback) {
+            element.addEventListener(eventName, callback, false);
+        };
+    }
+
+    return {
+        addEventListener: addEventListener
+    };
+})();
+
+js.addEventListener(document.body, 'mouseover', function (e) {
+    var nodeIterator = document.createNodeIterator(
+        document.body,
+        NodeFilter.SHOW_COMMENT,
+        { acceptNode: function (node) { return NodeFilter.FILTER_ACCEPT; } }
+    );
+    while (nodeIterator.nextNode()) {
+        var comment = nodeIterator.referenceNode.data.match(/^\s*XRAY START (.+)$/);
+        if (comment) {
+            console.log(comment[1].split(' '));
+        }
+    }
+});
