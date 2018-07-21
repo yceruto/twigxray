@@ -33,7 +33,7 @@ var js = (function() {
                 document.body,
                 NodeFilter.SHOW_COMMENT,
                 { acceptNode: function () { return NodeFilter.FILTER_ACCEPT; } }
-            );
+            ), MAX_ZINDEX = 2147483647;
             while (nodeIterator.nextNode()) {
                 var comment = nodeIterator.referenceNode, match = comment.data.match(/^TWIG-START: (.+)$/);
                 if (!match) {
@@ -75,7 +75,7 @@ var js = (function() {
                 visual.style.left = parseInt(bbox.left) + 'px';
                 visual.style.width = parseInt(bbox.width) + 'px';
                 visual.style.height = parseInt(bbox.height) + 'px';
-                visual.style.zIndex = String(2147483647 - parseInt(bbox.width * bbox.height));
+                visual.style.zIndex = String(MAX_ZINDEX - Math.min((MAX_ZINDEX - 9999), parseInt(bbox.width * bbox.height)));
                 document.body.appendChild(visual);
             }
         }
