@@ -74,6 +74,12 @@ var js = (function() {
                 }
 
                 var visual = document.createElement('DIV');
+                visual.dataset.twigDebug = parts.join(' ');
+                visual.style.top = parseInt(bbox.top) + 'px';
+                visual.style.left = parseInt(bbox.left) + 'px';
+                visual.style.width = parseInt(bbox.width) + 'px';
+                visual.style.height = parseInt(bbox.height) + 'px';
+                visual.style.zIndex = String(MAX_ZINDEX - Math.min((MAX_ZINDEX - 99999), parseInt(bbox.width * bbox.height)));
                 addEventListener(visual, 'mouseenter', function () {
                     var bar = document.getElementById('__twig-debug-bar'), rect = this.getBoundingClientRect();
                     bar.textContent = this.dataset.twigDebug;
@@ -84,12 +90,6 @@ var js = (function() {
                 addEventListener(visual, 'mouseleave', function () {
                     document.getElementById('__twig-debug-bar').style.display = 'none';
                 });
-                visual.dataset.twigDebug = parts.join(' ');
-                visual.style.top = parseInt(bbox.top) + 'px';
-                visual.style.left = parseInt(bbox.left) + 'px';
-                visual.style.width = parseInt(bbox.width) + 'px';
-                visual.style.height = parseInt(bbox.height) + 'px';
-                visual.style.zIndex = String(MAX_ZINDEX - Math.min((MAX_ZINDEX - 99999), parseInt(bbox.width * bbox.height)));
                 document.body.appendChild(visual);
             }
 
