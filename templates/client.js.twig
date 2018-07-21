@@ -54,7 +54,6 @@ var js = (function() {
                     if (target.nodeType === 3) {
                         target = document.createRange();
                         target.selectNodeContents(stack[i]);
-
                     }
                     rect = target.getBoundingClientRect();
                     if (rect.width === 0 || rect.height === 0) {
@@ -65,6 +64,9 @@ var js = (function() {
                     bbox.width = Math.max(bbox.width, rect.width);
                     bbox.height += rect.height;
                 }
+                if (bbox.width === 0 || bbox.height === 0) {
+                    continue;
+                }
 
                 var visual = document.createElement('DIV');
                 addClass(visual, 'xray');
@@ -73,6 +75,7 @@ var js = (function() {
                 visual.style.left = parseInt(bbox.left) + 'px';
                 visual.style.width = parseInt(bbox.width) + 'px';
                 visual.style.height = parseInt(bbox.height) + 'px';
+                visual.style.zIndex = String(2147483647 - parseInt(bbox.width * bbox.height));
                 document.body.appendChild(visual);
             }
         }
