@@ -1,8 +1,18 @@
 <style>
-div.__twig-debug {
+#__twig-debug-bar {
+    position: absolute;
+    display: none;
+    padding: 3px;
+    background: red;
+    outline: red solid thin;
+    color: white;
+    font-family: monospace;
+    font-weight: bold;
+}
+[data-twig-debug] {
     position: absolute;
 }
-div.__twig-debug:hover {
+[data-twig-debug]:hover {
     outline: red dashed thin;
 }
 </style>
