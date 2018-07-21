@@ -48,7 +48,7 @@ var js = (function() {
                     el = el.nextSibling;
                 }
 
-                var bbox = {top: 999999, left: 999999, width: 0, height: 0}, i, c;
+                var bbox = {top: 999999, left: 999999, right: 0, bottom: 0}, i, c;
                 for (i = 0, c = stack.length; i < c; ++i) {
                     var target = stack[i], rect;
                     if (target.nodeType === 3) {
@@ -61,10 +61,12 @@ var js = (function() {
                     }
                     bbox.top = Math.min(bbox.top, rect.top);
                     bbox.left = Math.min(bbox.left, rect.left);
-                    bbox.width = Math.max(bbox.width, rect.width);
-                    bbox.height += rect.height;
+                    bbox.right = Math.max(bbox.right, rect.right);
+                    bbox.bottom = Math.max(bbox.bottom, rect.bottom);
                 }
-                if (bbox.width === 0 || bbox.height === 0) {
+                bbox.width = bbox.right - bbox.left;
+                bbox.height = bbox.bottom - bbox.top;
+                if (bbox.width <= 0 || bbox.height <= 0) {
                     continue;
                 }
 
