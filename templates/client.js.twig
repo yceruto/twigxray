@@ -27,12 +27,6 @@ var js = (function() {
         };
     }
 
-    var twigDebugReset = function () {
-        document.querySelectorAll('[data-twig-debug], #__twig-debug-bar').forEach(function (el) {
-            el.parentNode.removeChild(el);
-        });
-    };
-
     var twigDebugEnabled = function () {
         return !!document.getElementById('__twig-debug-bar');
     };
