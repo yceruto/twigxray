@@ -81,8 +81,22 @@ var js = (function() {
                 visual.style.height = parseInt(bbox.height) + 'px';
                 visual.style.zIndex = String(MAX_ZINDEX - Math.min((MAX_ZINDEX - 99999), parseInt(bbox.width * bbox.height)));
                 addEventListener(visual, 'mouseenter', function () {
-                    var bar = document.getElementById('__twig-debug-bar'), rect = this.getBoundingClientRect();
-                    bar.textContent = this.dataset.twigDebug;
+                    var bar = document.getElementById('__twig-debug-bar'), rect = this.getBoundingClientRect(), data = this.dataset.twigDebug.split(' ');
+                    switch (data[0] || null) {
+                        case 'MACRO':
+                            bar.textContent = 'Macro "' + data[2] +'" in "' + data[3] + '" line ' + data[4];
+                            break;
+                        case 'BLOCK':
+                            bar.textContent = 'Block "' + data[2] +'" in "' + data[3] + '" line ' + data[4];
+                            break;
+                        case 'TEMPLATE':
+                            bar.textContent = 'Template "' + data[2] +'"';
+                            break;
+                        default:
+                            bar.textContent = 'Unknown twig element';
+                            break;
+
+                    }
                     bar.style.top = parseInt(rect.top + rect.height) + 'px';
                     bar.style.left = parseInt(rect.left) + 'px';
                     bar.style.display = 'block';
