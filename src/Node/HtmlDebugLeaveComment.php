@@ -7,7 +7,7 @@ use Twig\Node\Node;
 /**
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  */
-class XrayLeaveComment extends Node implements \Twig_NodeOutputInterface
+class HtmlDebugLeaveComment extends Node implements \Twig_NodeOutputInterface
 {
     public function __construct($type, $hash)
     {
