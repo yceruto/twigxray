@@ -8,6 +8,10 @@
 <section>{% block header %}Welcome to Xray Twig Inspector{% endblock %}</section>
 <section>{% block content %}{% endblock %}</section>
 <section>{% block footer %}@copyright 2018{% endblock %}</section>
+<section style="position: fixed; right: 0; bottom: 0; font-size: x-large;">
+    <a href="javascript:;" id="twig-debug-enable">Enable</a>
+    <a href="javascript:;" id="twig-debug-discover" style="display: none;">Discover</a>
+</section>
 {% include 'client.css.twig' %}
 <script>{% include 'client.js.twig' %}</script>
 </body>
