@@ -27,14 +27,22 @@ var js = (function() {
         };
     }
 
+    var twigDebugReset = function () {
+        document.querySelectorAll('[data-twig-debug], #__twig-debug-bar').forEach(function (el) {
+            el.parentNode.removeChild(el);
+        });
+    };
+
+    var twigDebugEnabled = function () {
+        return !!document.getElementById('__twig-debug-bar');
+    };
+
     return {
+        addClass: addClass,
         addEventListener: addEventListener,
-        twigDebug: function (reset) {
-            if (reset || false) {
-                document.querySelectorAll('[data-twig-debug], #__twig-debug-bar').forEach(function (el) {
-                    el.parentNode.removeChild(el);
-                });
-            } else if (document.getElementById('__twig-debug-bar')) {
+        twigDebugEnabled: twigDebugEnabled,
+        twigDebugEnable: function () {
+            if (twigDebugEnabled()) {
                 return;
             }
             var comments = document.createNodeIterator(document.body, NodeFilter.SHOW_COMMENT), MAX_ZINDEX = 2147483647;
@@ -112,15 +120,37 @@ var js = (function() {
             bar.setAttribute('id', '__twig-debug-bar');
             bar.style.zIndex = String(MAX_ZINDEX);
             document.body.appendChild(bar);
+        },
+        twigDebugDisable: function () {
+            document.querySelectorAll('[data-twig-debug], #__twig-debug-bar').forEach(function (el) {
+                el.parentNode.removeChild(el);
+            });
         }
     };
 })();
 
-js.addEventListener(document, 'DOMContentLoaded', function() {
-    js.twigDebug();
+js.addEventListener(window, 'resize', function() {
+    if (js.twigDebugEnabled()) {
+        js.twigDebugDisable();
+        js.twigDebugEnable();
+    }
 });
 
-js.addEventListener(window, 'resize', function() {
-    js.twigDebug(true);
+js.addEventListener(document.getElementById('twig-debug-enable'), 'click', function() {
+    if (js.twigDebugEnabled()) {
+        js.twigDebugDisable();
+        document.getElementById('twig-debug-discover').style.display = 'none';
+        this.textContent = 'Enable';
+    } else {
+        js.twigDebugEnable();
+        document.getElementById('twig-debug-discover').style.display = 'initial';
+        this.textContent = 'Disable';
+    }
+});
+
+js.addEventListener(document.getElementById('twig-debug-discover'), 'click', function() {
+    document.querySelectorAll('[data-twig-debug]').forEach(function (el) {
+        js.addClass(el, 'discovered');
+    });
 });
 })();
