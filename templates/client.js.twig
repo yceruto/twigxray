@@ -1,0 +1,126 @@
+(function () {
+var js = (function() {
+    "use strict";
+
+    if ('classList' in document.documentElement) {
+        var hasClass = function (el, cssClass) { return el.classList.contains(cssClass); };
+        var removeClass = function(el, cssClass) { el.classList.remove(cssClass); };
+        var addClass = function(el, cssClass) { el.classList.add(cssClass); };
+        var toggleClass = function(el, cssClass) { el.classList.toggle(cssClass); };
+    } else {
+        var hasClass = function (el, cssClass) { return el.className.match(new RegExp('\\b' + cssClass + '\\b')); };
+        var removeClass = function(el, cssClass) { el.className = el.className.replace(new RegExp('\\b' + cssClass + '\\b'), ' '); };
+        var addClass = function(el, cssClass) { if (!hasClass(el, cssClass)) { el.className += " " + cssClass; } };
+        var toggleClass = function(el, cssClass) { hasClass(el, cssClass) ? removeClass(el, cssClass) : addClass(el, cssClass); };
+    }
+
+    var addEventListener;
+
+    var el = document.createElement('div');
+    if (!('addEventListener' in el)) {
+        addEventListener = function (element, eventName, callback) {
+            element.attachEvent('on' + eventName, callback);
+        };
+    } else {
+        addEventListener = function (element, eventName, callback) {
+            element.addEventListener(eventName, callback, false);
+        };
+    }
+
+    return {
+        addEventListener: addEventListener,
+        twigDebug: function (reset) {
+            if (reset || false) {
+                document.querySelectorAll('[data-twig-debug], #__twig-debug-bar').forEach(function (el) {
+                    el.parentNode.removeChild(el);
+                });
+            } else if (document.getElementById('__twig-debug-bar')) {
+                return;
+            }
+            var comments = document.createNodeIterator(document.body, NodeFilter.SHOW_COMMENT), MAX_ZINDEX = 2147483647;
+            while (comments.nextNode()) {
+                var comment = comments.referenceNode, match = comment.data.match(/^TWIG-START: (.+)$/);
+                if (!match) {
+                    continue;
+                }
+
+                var parts = match[1].split(' '), el = comment.nextSibling, stack = [];
+                while (!(!el || (el.nodeType === 8 && el.data === ('TWIG-END: ' + parts[0] + ' ' + parts[1])))) {
+                    if (el.nodeType === 3 || (el.nodeType === 1 && el.tagName !== 'SCRIPT')) {
+                        stack.push(el);
+                    }
+                    el = el.nextSibling;
+                }
+
+                var bbox = {top: Number.MAX_SAFE_INTEGER, left: Number.MAX_SAFE_INTEGER, right: 0, bottom: 0}, i, c;
+                for (i = 0, c = stack.length; i < c; ++i) {
+                    var target = stack[i], rect;
+                    if (target.nodeType === 3) {
+                        target = document.createRange();
+                        target.selectNodeContents(stack[i]);
+                    }
+                    rect = target.getBoundingClientRect();
+                    if (rect.width === 0 || rect.height === 0) {
+                        continue;
+                    }
+                    bbox.top = Math.min(bbox.top, rect.top);
+                    bbox.left = Math.min(bbox.left, rect.left);
+                    bbox.right = Math.max(bbox.right, rect.right);
+                    bbox.bottom = Math.max(bbox.bottom, rect.bottom);
+                }
+                bbox.width = bbox.right - bbox.left;
+                bbox.height = bbox.bottom - bbox.top;
+                if (bbox.width <= 0 || bbox.height <= 0) {
+                    continue;
+                }
+
+                var visual = document.createElement('DIV');
+                visual.dataset.twigDebug = parts.join(' ');
+                visual.style.top = parseInt(bbox.top) + 'px';
+                visual.style.left = parseInt(bbox.left) + 'px';
+                visual.style.width = parseInt(bbox.width) + 'px';
+                visual.style.height = parseInt(bbox.height) + 'px';
+                visual.style.zIndex = String(MAX_ZINDEX - Math.min((MAX_ZINDEX - 99999), parseInt(bbox.width * bbox.height)));
+                addEventListener(visual, 'mouseenter', function () {
+                    var bar = document.getElementById('__twig-debug-bar'), rect = this.getBoundingClientRect(), data = this.dataset.twigDebug.split(' ');
+                    switch (data[0] || null) {
+                        case 'MACRO':
+                            bar.textContent = 'Macro "' + data[2] +'" in "' + data[3] + '" line ' + data[4];
+                            break;
+                        case 'BLOCK':
+                            bar.textContent = 'Block "' + data[2] +'" in "' + data[3] + '" line ' + data[4];
+                            break;
+                        case 'TEMPLATE':
+                            bar.textContent = 'Template "' + data[2] +'"';
+                            break;
+                        default:
+                            bar.textContent = 'Unknown twig element';
+                            break;
+
+                    }
+                    bar.style.top = parseInt(rect.top + rect.height) + 'px';
+                    bar.style.left = parseInt(rect.left) + 'px';
+                    bar.style.display = 'block';
+                });
+                addEventListener(visual, 'mouseleave', function () {
+                    document.getElementById('__twig-debug-bar').style.display = 'none';
+                });
+                document.body.appendChild(visual);
+            }
+
+            var bar = document.createElement('DIV');
+            bar.setAttribute('id', '__twig-debug-bar');
+            bar.style.zIndex = String(MAX_ZINDEX);
+            document.body.appendChild(bar);
+        }
+    };
+})();
+
+js.addEventListener(document, 'DOMContentLoaded', function() {
+    js.twigDebug();
+});
+
+js.addEventListener(window, 'resize', function() {
+    js.twigDebug(true);
+});
+})();
