@@ -32,7 +32,7 @@ var js = (function() {
     };
 
     return {
-        addClass: addClass,
+        toggleClass: toggleClass,
         addEventListener: addEventListener,
         twigDebugEnabled: twigDebugEnabled,
         twigDebugEnable: function () {
@@ -131,20 +131,24 @@ js.addEventListener(window, 'resize', function() {
 });
 
 js.addEventListener(document.getElementById('twig-debug-enable'), 'click', function() {
+    var discover = document.getElementById('twig-debug-discover');
     if (js.twigDebugEnabled()) {
         js.twigDebugDisable();
-        document.getElementById('twig-debug-discover').style.display = 'none';
+        discover.style.display = 'none';
+        discover.textContent = 'Cancel';
         this.textContent = 'Enable';
     } else {
         js.twigDebugEnable();
-        document.getElementById('twig-debug-discover').style.display = 'initial';
+        discover.textContent = 'Discover';
+        discover.style.display = 'initial';
         this.textContent = 'Disable';
     }
 });
 
 js.addEventListener(document.getElementById('twig-debug-discover'), 'click', function() {
     document.querySelectorAll('[data-twig-debug]').forEach(function (el) {
-        js.addClass(el, 'discovered');
+        js.toggleClass(el, 'discovered');
     });
+    this.textContent = document.querySelector('[data-twig-debug].discovered') ? 'Cancel' : 'Discover';
 });
 })();
